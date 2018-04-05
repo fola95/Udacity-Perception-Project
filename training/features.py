@@ -44,6 +44,7 @@ def compute_color_histograms(cloud, using_hsv=True):
     # Generate random features for demo mode.  
     # Replace normed_features with your feature vector
     normed_features = hist_features/ np.sum(hist_features)
+    #print("color**********", normed_features)
     return normed_features 
 
 
@@ -60,16 +61,21 @@ def compute_normal_histograms(normal_cloud):
         norm_z_vals.append(norm_component[2])
 
     # TODO: Compute histograms of normal values (just like with color)
-    nbin = 32
-    nrange = (0, 256)
-    r_hist = np.histogram(norm_x_vals, bins=nbin, range=nrange)
-    g_hist = np.histogram(norm_y_vals, bins=nbin, range=nrange)
-    b_hist = np.histogram(norm_z_vals, bins=nbin, range=nrange)
+    nbin = 30
+    nrange = (0, 1)
+    norm_x = np.histogram(norm_x_vals, bins=nbin, range=nrange)
+    norm_y = np.histogram(norm_y_vals, bins=nbin, range=nrange)
+    norm_z = np.histogram(norm_z_vals, bins=nbin, range=nrange)
 
     # TODO: Concatenate and normalize the histograms
-    hist_features = np.concatenate((r_hist[0], g_hist[0], b_hist[0])).astype(np.float64)
+    hist_features = np.concatenate((norm_x[0], norm_y[0], norm_z[0])).astype(np.float64)
     # Generate random features for demo mode.  
     # Replace normed_features with your feature vector
     normed_features = hist_features/ np.sum(hist_features)
-
+    print("normal ",normed_features)
+    #fig = plt.figure(figsize=(12,6))
+    #plt.plot(normed_features)
+    #plt.title('Normal Features Plot')
+    #plt.tick_params(axis='both', which='major', labelsize=20)
+    #fig.tight_layout()
     return normed_features
