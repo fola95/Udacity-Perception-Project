@@ -1,31 +1,7 @@
 ## Project: Perception Pick & Place
-### Writeup Template: You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
-
-# Required Steps for a Passing Submission:
-1. Extract features and train an SVM model on new objects (see `pick_list_*.yaml` in `/pr2_robot/config/` for the list of models you'll be trying to identify). 
-2. Write a ROS node and subscribe to `/pr2/world/points` topic. This topic contains noisy point cloud data that you must work with.
-3. Use filtering and RANSAC plane fitting to isolate the objects of interest from the rest of the scene.
-4. Apply Euclidean clustering to create separate clusters for individual items.
-5. Perform object recognition on these objects and assign them labels (markers in RViz).
-6. Calculate the centroid (average in x, y and z) of the set of points belonging to that each object.
-7. Create ROS messages containing the details of each object (name, pick_pose, etc.) and write these messages out to `.yaml` files, one for each of the 3 scenarios (`test1-3.world` in `/pr2_robot/worlds/`).  [See the example `output.yaml` for details on what the output should look like.](https://github.com/udacity/RoboND-Perception-Project/blob/master/pr2_robot/config/output.yaml)  
-8. Submit a link to your GitHub repo for the project or the Python code for your perception pipeline and your output `.yaml` files (3 `.yaml` files, one for each test world).  You must have correctly identified 100% of objects from `pick_list_1.yaml` for `test1.world`, 80% of items from `pick_list_2.yaml` for `test2.world` and 75% of items from `pick_list_3.yaml` in `test3.world`.
-9. Congratulations!  Your Done!
-
-# Extra Challenges: Complete the Pick & Place
-7. To create a collision map, publish a point cloud to the `/pr2/3d_map/points` topic and make sure you change the `point_cloud_topic` to `/pr2/3d_map/points` in `sensors.yaml` in the `/pr2_robot/config/` directory. This topic is read by Moveit!, which uses this point cloud input to generate a collision map, allowing the robot to plan its trajectory.  Keep in mind that later when you go to pick up an object, you must first remove it from this point cloud so it is removed from the collision map!
-8. Rotate the robot to generate collision map of table sides. This can be accomplished by publishing joint angle value(in radians) to `/pr2/world_joint_controller/command`
-9. Rotate the robot back to its original state.
-10. Create a ROS Client for the “pick_place_routine” rosservice.  In the required steps above, you already created the messages you need to use this service. Checkout the [PickPlace.srv](https://github.com/udacity/RoboND-Perception-Project/tree/master/pr2_robot/srv) file to find out what arguments you must pass to this service.
-11. If everything was done correctly, when you pass the appropriate messages to the `pick_place_routine` service, the selected arm will perform pick and place operation and display trajectory in the RViz window
-12. Place all the objects from your pick list in their respective dropoff box and you have completed the challenge!
-13. Looking for a bigger challenge?  Load up the `challenge.world` scenario and see if you can get your perception pipeline working there!
-
-## [Rubric](https://review.udacity.com/#!/rubrics/1067/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+## [Rubric](https://review.udacity.com/#!/rubrics/1067/view) 
 
 ---
 ### Writeup / README
@@ -36,22 +12,37 @@ You're reading it!
 
 ### Exercise 1, 2 and 3 pipeline implemented
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
+Here were were introduced to loading the point filter cloud. With the loaded cloud we performed downsampling using voxel grids, made use of pass through filters and RANSAC to remove the table top and further narrow down the objects. I had to test different parameters, eventually the below worked for my environment.
+Voxel Grid: LEAF_SIZE=0.1
+Pass through filter: min_axis=0.6, max_axis=2.0
+RANSAC : max_distance =0.05, mean_k= 50, std_dev=1
 
+Output can be found here
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
-
+In this step, we took advantage of color historograms and performed clustering using K-Means. At the end we had a point cloud which was properly segmented and color coded for different objects.
 #### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
-Here is an example of how to include an image in your writeup.
+Here after we have segmeneted our objects we perform feature extraction using the capture_features.py script, and train_svm.py to train using extracted features. For this step in the project, I ran the feature extraction for 15 runs to capture random perspectives, used the 'rbf' kernel for the Support Vector Machine classifier and adjusted filtering from the passthrough filter to ensure that the edges of the table were filtered.
 
-![demo-1](https://user-images.githubusercontent.com/20687560/28748231-46b5b912-7467-11e7-8778-3095172b7b19.png)
+Confusion matrix below:
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/conf.png)
+
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/normalized.png)
 
 ### Pick and Place Setup
+Having understood and wired up my perception pipeline for project pick and place, below are the results.
 
-#### 1. For all three tabletop setups (`test*.world`), perform object recognition, then read in respective pick list (`pick_list_*.yaml`). Next construct the messages that would comprise a valid `PickPlace` request output them to `.yaml` format.
 
-And here's another image! 
-![demo-2](https://user-images.githubusercontent.com/20687560/28748286-9f65680e-7468-11e7-83dc-f1a32380b89c.png)
+World 1:
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world1.png)
 
-Spend some time at the end to discuss your code, what techniques you used, what worked and why, where the implementation might fail and how you might improve it if you were going to pursue this project further.  
+World 2:
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world2.png)
+World 3:
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world3.png)
+
+
+All the code is contained in [project_template.py ] (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
+
 
 
 
