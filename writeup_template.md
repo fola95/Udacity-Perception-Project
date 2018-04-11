@@ -41,7 +41,8 @@ World 3:
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world3.png)
 
 
-All the code is contained in [project_template.py ] (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
+All the code is contained in 
+project_template.py: (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
 
 
 
