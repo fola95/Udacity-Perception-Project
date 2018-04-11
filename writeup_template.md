@@ -21,7 +21,7 @@ Output can be found here
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
 In this step, we took advantage of color historograms and performed clustering using K-Means. At the end we had a point cloud which was properly segmented and color coded for different objects.
 #### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
-Here after we have segmeneted our objects we perform feature extraction using the capture_features.py script, and train_svm.py to train using extracted features. For this step in the project, I ran the feature extraction for 15 runs to capture random perspectives, used the 'rbf' kernel for the Support Vector Machine classifier and adjusted filtering from the passthrough filter to ensure that the edges of the table were filtered.
+Here after we have segmented our objects we perform feature extraction using the capture_features.py script, and train_svm.py to train using extracted features. For this step in the project, I ran the feature extraction for 15 runs to capture random perspectives, used the 'rbf' kernel for the Support Vector Machine classifier and adjusted filtering from the passthrough filter to ensure that the edges of the table were filtered.
 
 Confusion matrix below:
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/conf.png)
