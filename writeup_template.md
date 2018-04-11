@@ -23,6 +23,11 @@ In this step, we took advantage of color historograms and performed clustering u
 #### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
 Here after we have segmeneted our objects we perform feature extraction using the capture_features.py script, and train_svm.py to train using extracted features. For this step in the project, I ran the feature extraction for 15 runs to capture random perspectives, used the 'rbf' kernel for the Support Vector Machine classifier and adjusted filtering from the passthrough filter to ensure that the edges of the table were filtered.
 
+Confusion matrix below:
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/conf.png)
+
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/normalized.png)
+
 ### Pick and Place Setup
 Having understood and wired up my perception pipeline for project pick and place, below are the results.
 
@@ -36,7 +41,7 @@ World 3:
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world3.png)
 
 
-
+All the code is contained in [project_template.py ] (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
 
 
 
