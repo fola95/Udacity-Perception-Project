@@ -44,6 +44,7 @@ World 3:
 All the code is contained in 
 project_template.py: (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
 
-
+Out yaml files can be found:
+https://github.com/fola95/Udacity-Perception-Project/tree/master/outputs
 
 
