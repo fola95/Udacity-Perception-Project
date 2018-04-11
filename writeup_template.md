@@ -35,8 +35,21 @@ passthrough = cloud_filtered.make_passthrough_filter()
     axis_max = 2.0
 ```
 We filtered along the z axis ( this is perpendicular to the table) the table surface and objects is best located between 0.6 and 2.0 units along the z axis, hence the min and max settings. Only objects within that range will "passthrough"
+ 
+I did do some extra filtering along the y-axis to remove extra edges from the table.
+```
+#need to filter table edges
+    passthrough = cloud_filtered.make_passthrough_filter()
+    filter_axis = 'y'
+    passthrough.set_filter_field_name(filter_axis)
+    axis_min = -0.4
+    axis_max = 0.4
+    passthrough.set_filter_limits(axis_min, axis_max)
+    cloud_filtered = passthrough.filter()
 
+```
 ![passthrough](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/passthrough.png)
+
 
 Next we use RANSAC to completed the job such that only the objects are now available. This filters based on a specified model. in our case the model is a plane to identify the table. Things which match this model are filtered.
 ```python
@@ -62,19 +75,68 @@ sof= point_cloud.make_statistical_outlier_filter()
     sof.set_std_dev_mul_thresh(0.1)
     cloud_filtered = sof.filter()
 ```
-#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
-In this step, we took advantage of color historograms and performed clustering using K-Means. At the end we had a point cloud which was properly segmented and color coded for different objects.
-#### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
-Here after we have segmented our objects we perform feature extraction using the capture_features.py script, and train_svm.py to train using extracted features. For this step in the project, I ran the feature extraction for 15 runs to capture random perspectives, used the 'rbf' kernel for the Support Vector Machine classifier and adjusted filtering from the passthrough filter to ensure that the edges of the table were filtered.
+#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented. 
+For this step, we had to figure out a way to group or cluster our datapoints such that they represent the objects. DBSCAN was a good clustering algorithm for this case. Given its measurement of point proximity and iterative improvement as the cluster centers adjust, this was a logical choice to test with. In comparison to K-means it was a better choice because we assume we do not know how may clusters we have initially. PCL library's EuclideanClusterExtraction() is able to achieve this.
+```python
+white_cloud = XYZRGB_to_XYZ(cloud_objects)
+    tree = white_cloud.make_kdtree()
+    ec = white_cloud.make_EuclideanClusterExtraction()
+    ec.set_ClusterTolerance(0.02)
+    ec.set_MinClusterSize(20)
+    ec.set_MaxClusterSize(1000)
+    ec.set_SearchMethod(tree)
+    cluster_indices = ec.Extract()
+        
+    cluster_color = get_color_list(len(cluster_indices))
+    color_cluster_point_list = []
 
-Confusion matrix below:
+    for j, indices in enumerate(cluster_indices):
+        for i, indice in enumerate(indices):
+            color_cluster_point_list.append([white_cloud[indice][0],
+                                        white_cloud[indice][1],
+                                        white_cloud[indice][2],
+                                         rgb_to_float(cluster_color[j])])
+    cluster_cloud = pcl.PointCloud_PointXYZRGB()
+    color_cluster_point_list = []
+    for j, indices in enumerate(cluster_indices):
+        for i, indice in enumerate(indices):
+            color_cluster_point_list.append([white_cloud[indice][0],
+                                        white_cloud[indice][1],
+                                        white_cloud[indice][2],
+                                         rgb_to_float(cluster_color[j])])
+    cluster_cloud = pcl.PointCloud_PointXYZRGB()
+    cluster_cloud.from_list(color_cluster_point_list)
+    filename = 'cluster.pcd'
+    pcl.save(cluster_cloud, filename)
+
+```
+The choice of min and mac clusters was more of an art but our tolerance makes sense to be small so that we can easily detect objects.
+![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/cluster.png)
+
+#### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
+Lastly, we had to capture features and train a classifier to perform object detection. 
+I ran the capture_features.py script to capture features from 15 random angles for all objects. The classifier used was a Support vector machine with 'rbf' kernel. I was able to achieve and accuracy of 93%.
+```
+#classified modification
+# Create classifier
+clf = svm.SVC(kernel='rbf')
+
+```
+
+capture_features.py can be found here:
+https://github.com/fola95/Udacity-Perception-Project/blob/master/training/capture_features.py
+
+train_svm.py can be found here:
+https://github.com/fola95/Udacity-Perception-Project/blob/master/training/train_svm.py
+
+
+
+Confusion matrix for analysis:
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/conf.png)
 
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/normalized.png)
 
-### Pick and Place Setup
-Having understood and wired up my perception pipeline for project pick and place, below are the results.
-
+### RESULTS! --- 100% on all Worlds---
 
 World 1:
 ![demo-2](https://github.com/fola95/Udacity-Perception-Project/blob/master/screenshot/world1.png)
@@ -88,7 +150,7 @@ World 3:
 All the code is contained in 
 project_template.py: (https://github.com/fola95/Udacity-Perception-Project/blob/master/pr2_robot/scripts/project_template.py)
 
-Out yaml files can be found:
+Output yaml files can be found:
 https://github.com/fola95/Udacity-Perception-Project/tree/master/outputs
 
 
