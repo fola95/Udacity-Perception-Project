@@ -115,13 +115,16 @@ The choice of min and max clusters was more of an art but our tolerance makes se
 
 #### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
 Lastly, we had to capture features and train a classifier to perform object detection. 
-I ran the capture_features.py script to capture features from 15 random angles for all objects. The classifier used was a Support vector machine with 'rbf' kernel. I was able to achieve and accuracy of 93%.
+I ran the capture_features.py script to capture features from 15 random angles for all objects. The capture makes use of color_histograms to identify certain objects. This served as our feature set and the names of the objects were our labels. The classifier used was a Support vector machine with 'rbf' kernel. I was able to achieve and accuracy of 93%.
 ```
 #classified modification
 # Create classifier
 clf = svm.SVC(kernel='rbf')
 
 ```
+
+color histogram generation is found in features.py here:
+https://github.com/fola95/Udacity-Perception-Project/blob/master/training/features.py
 
 capture_features.py can be found here:
 https://github.com/fola95/Udacity-Perception-Project/blob/master/training/capture_features.py
