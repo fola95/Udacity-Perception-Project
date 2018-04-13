@@ -125,6 +125,7 @@ clf = svm.SVC(kernel='rbf')
 
 color histogram generation is found in features.py here:
 https://github.com/fola95/Udacity-Perception-Project/blob/master/training/features.py
+(Interestingly, I was able to attain my results without the use of normal histogram features)
 
 capture_features.py can be found here:
 https://github.com/fola95/Udacity-Perception-Project/blob/master/training/capture_features.py
